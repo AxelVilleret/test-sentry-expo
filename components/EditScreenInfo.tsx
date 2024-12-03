@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-
+import * as Sentry from "@sentry/react-native";
 import { ExternalLink } from './ExternalLink';
 import { MonoText } from './StyledText';
 import { Text, View } from './Themed';
@@ -8,6 +8,26 @@ import { Text, View } from './Themed';
 import Colors from '@/constants/Colors';
 
 export default function EditScreenInfo({ path }: { path: string }) {
+
+  useEffect(() => {
+    const fetchPokemon = async () => {
+      try {
+        console.log("Fetching Pokemon...");
+        const response = await fetch('https://pokeapi.co/api/v2/pokemon/nonexistentpokemon');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        Sentry.captureException(error);
+        console.error("Pokemon not found!", error);
+      }
+    };
+
+    fetchPokemon();
+  }, []);
+
   return (
     <View>
       <View style={styles.getStartedContainer}>
